@@ -95,6 +95,10 @@ public static class Options
         /// <summary>
         /// USA, East (Washington D.C.).
         /// </summary>
+        Turkey,
+        /// <summary>
+        /// Turkey (Istanbul).
+        /// </summary>
         USAEast,
         /// <summary>
         /// Usa, West (San José).
