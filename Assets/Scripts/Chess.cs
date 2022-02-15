@@ -322,12 +322,12 @@ public static class Chess
     {
         foreach (GameObject piece in PiecesWhite)
         {
-            Object.Destroy(piece);
+            Object.DestroyImmediate(piece);
         }
 
         foreach (GameObject piece in PiecesBlack)
         {
-            Object.Destroy(piece);
+            Object.DestroyImmediate(piece);
         }
 
         DeselectPosition();
@@ -348,8 +348,9 @@ public static class Chess
     /// Place all the pieces on the board in an orderly manner, following the rules of chess.
     /// </summary>
     /// <param name="chess960">Expresses if the game mode is Chess 960.</param>
-    static void InitialSpawn(bool chess960 = false)
+    public static int InitialSpawn(bool chess960 = false)
     {
+        int pass = -1;
         if (chess960)
         {
             List<int> positions = new List<int>() { 1, 2, 3, 4, 5, 6, 7, 8 };
@@ -435,6 +436,9 @@ public static class Chess
             PiecesWhite.Add(Object.Instantiate(Resources.Load<GameObject>("Pieces/pawnW"), new Vector2(i, 2), Quaternion.identity));
             PiecesBlack.Add(Object.Instantiate(Resources.Load<GameObject>("Pieces/pawnB"), new Vector2(i, 7), Quaternion.identity));
         }
+
+        pass = chess960 ? 0 : 1;
+        return pass;
     }
 
     #endregion
