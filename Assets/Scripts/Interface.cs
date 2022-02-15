@@ -13,6 +13,8 @@ public class Interface : MonoBehaviour
     /// </summary>
     public static Interface interfaceClass;
 
+    public bool chess960 = false;
+
     /// <summary>
     /// Panel that contains all the subpanels of the main menu.
     /// </summary>
@@ -241,6 +243,22 @@ public class Interface : MonoBehaviour
     }
 
     /// <summary>
+    /// Sets the chess960 variable to true
+    /// </summary>
+    public void Chess960Game()
+    {
+        chess960 = true;
+    }
+
+    /// <summary>
+    /// Sets the chess960 variable to false
+    /// </summary>
+    public void StandardGame()
+    {
+        chess960 = false;
+    }
+
+    /// <summary>
     /// Opens the connection error notification, displaying a message to indicate the reason for the error.
     /// </summary>
     /// <param name="cause">The cause of the error that occurred.</param>
@@ -279,7 +297,7 @@ public class Interface : MonoBehaviour
         buttonRestartEndGame.onClick.AddListener(delegate { OpenPanelColours(); });
         buttonConfirmRestart.onClick.AddListener(delegate { OpenPanelColours(); });
 
-        Chess.SelectColor(Enums.Colours.White, null);
+        Chess.SelectColor(Enums.Colours.White, null, chess960);
     }
 
     /// <summary>
@@ -294,7 +312,7 @@ public class Interface : MonoBehaviour
         buttonRestartEndGame.onClick.AddListener(delegate { OpenPanelColours(); });
         buttonConfirmRestart.onClick.AddListener(delegate { OpenPanelColours(); });
 
-        Chess.SelectColor(Enums.Colours.Black, null);
+        Chess.SelectColor(Enums.Colours.Black, null, chess960);
     }
 
     /// <summary>

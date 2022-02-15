@@ -85,7 +85,8 @@ public static class Chess
     /// Activate the selected color and start a game against the AI.
     /// </summary>
     /// <param name="data">The loaded game, if it exists. Null to start the game from the beginning.</param>
-    public static void SelectColor(Enums.Colours colour, SaveData data)
+    /// <param name="chess960">Expresses if the game mode is Chess 960.</param>
+    public static void SelectColor(Enums.Colours colour, SaveData data, bool chess960 = false)
     {
         // We clean the scene for safety.
 
@@ -103,7 +104,7 @@ public static class Chess
 
         if (data == null)
         {
-            StartNewGame();
+            StartNewGame(chess960);
         }
 
         else
@@ -117,11 +118,12 @@ public static class Chess
     /// <summary>
     /// Start a game from the beginning.
     /// </summary>
-    public static void StartNewGame()
+    /// <param name="chess960">Expresses if the game mode is Chess 960.</param>
+    public static void StartNewGame(bool chess960 = false)
     {
         // We place all the pieces on the board in their initial position.
 
-        InitialSpawn();
+        InitialSpawn(chess960);
 
         // We remove the history of saved positions from a possible previous game.
 
@@ -345,47 +347,92 @@ public static class Chess
     /// <summary>
     /// Place all the pieces on the board in an orderly manner, following the rules of chess.
     /// </summary>
-    static void InitialSpawn()
+    /// <param name="chess960">Expresses if the game mode is Chess 960.</param>
+    static void InitialSpawn(bool chess960 = false)
     {
-        // We instantiate all the white pieces from the prefabs in the "Resources" folder. Likewise, we indicate which piece is the king.
+        if (chess960)
+        {
+            List<int> positions = new List<int>() { 1, 2, 3, 4, 5, 6, 7, 8 };
 
-        whiteKing = Object.Instantiate(Resources.Load<GameObject>("Pieces/kingW"), new Vector2(5, 1), Quaternion.identity);
-        PiecesWhite.Add(whiteKing);
+            int randPos = Random.Range(1, 5);
+            int pos = (randPos * 2) - 1;
+            PiecesWhite.Add(Object.Instantiate(Resources.Load<GameObject>("Pieces/bishopW"), new Vector2(pos, 1), Quaternion.identity));
+            PiecesBlack.Add(Object.Instantiate(Resources.Load<GameObject>("Pieces/bishopB"), new Vector2(pos, 8), Quaternion.identity));
+            positions.Remove(pos);
 
-        PiecesWhite.Add(Object.Instantiate(Resources.Load<GameObject>("Pieces/rookW"), new Vector2(1, 1), Quaternion.identity));
-        PiecesWhite.Add(Object.Instantiate(Resources.Load<GameObject>("Pieces/rookW"), new Vector2(8, 1), Quaternion.identity));
+            randPos = Random.Range(1, 5);
+            pos = randPos * 2;
+            PiecesWhite.Add(Object.Instantiate(Resources.Load<GameObject>("Pieces/bishopW"), new Vector2(pos, 1), Quaternion.identity));
+            PiecesBlack.Add(Object.Instantiate(Resources.Load<GameObject>("Pieces/bishopB"), new Vector2(pos, 8), Quaternion.identity));
+            positions.Remove(pos);
 
-        PiecesWhite.Add(Object.Instantiate(Resources.Load<GameObject>("Pieces/knightW"), new Vector2(2, 1), Quaternion.identity));
-        PiecesWhite.Add(Object.Instantiate(Resources.Load<GameObject>("Pieces/knightW"), new Vector2(7, 1), Quaternion.identity));
+            randPos = positions[Random.Range(0, positions.Count)];
+            PiecesWhite.Add(Object.Instantiate(Resources.Load<GameObject>("Pieces/queenW"), new Vector2(randPos, 1), Quaternion.identity));
+            PiecesBlack.Add(Object.Instantiate(Resources.Load<GameObject>("Pieces/queenB"), new Vector2(randPos, 8), Quaternion.identity));
+            positions.Remove(randPos);
 
-        PiecesWhite.Add(Object.Instantiate(Resources.Load<GameObject>("Pieces/bishopW"), new Vector2(3, 1), Quaternion.identity));
-        PiecesWhite.Add(Object.Instantiate(Resources.Load<GameObject>("Pieces/bishopW"), new Vector2(6, 1), Quaternion.identity));
+            randPos = positions[Random.Range(0, positions.Count)];
+            PiecesWhite.Add(Object.Instantiate(Resources.Load<GameObject>("Pieces/knightW"), new Vector2(randPos, 1), Quaternion.identity));
+            PiecesBlack.Add(Object.Instantiate(Resources.Load<GameObject>("Pieces/knightB"), new Vector2(randPos, 8), Quaternion.identity));
+            positions.Remove(randPos);
 
-        PiecesWhite.Add(Object.Instantiate(Resources.Load<GameObject>("Pieces/queenW"), new Vector2(4, 1), Quaternion.identity));
+            randPos = positions[Random.Range(0, positions.Count)];
+            PiecesWhite.Add(Object.Instantiate(Resources.Load<GameObject>("Pieces/knightW"), new Vector2(randPos, 1), Quaternion.identity));
+            PiecesBlack.Add(Object.Instantiate(Resources.Load<GameObject>("Pieces/knightB"), new Vector2(randPos, 8), Quaternion.identity));
+            positions.Remove(randPos);
+
+            pos = positions[0];
+            PiecesWhite.Add(Object.Instantiate(Resources.Load<GameObject>("Pieces/rookW"), new Vector2(pos, 1), Quaternion.identity));
+            PiecesBlack.Add(Object.Instantiate(Resources.Load<GameObject>("Pieces/rookB"), new Vector2(pos, 8), Quaternion.identity));
+
+            pos = positions[2];
+            PiecesWhite.Add(Object.Instantiate(Resources.Load<GameObject>("Pieces/rookW"), new Vector2(pos, 1), Quaternion.identity));
+            PiecesBlack.Add(Object.Instantiate(Resources.Load<GameObject>("Pieces/rookB"), new Vector2(pos, 8), Quaternion.identity));
+
+            pos = positions[1];
+            whiteKing = Object.Instantiate(Resources.Load<GameObject>("Pieces/kingW"), new Vector2(pos, 1), Quaternion.identity);
+            PiecesWhite.Add(whiteKing);
+            blackKing = Object.Instantiate(Resources.Load<GameObject>("Pieces/kingB"), new Vector2(pos, 8), Quaternion.identity);
+            PiecesBlack.Add(blackKing);
+        }
+        else
+        {
+            // We instantiate all the white pieces from the prefabs in the "Resources" folder. Likewise, we indicate which piece is the king.
+
+            whiteKing = Object.Instantiate(Resources.Load<GameObject>("Pieces/kingW"), new Vector2(5, 1), Quaternion.identity);
+            PiecesWhite.Add(whiteKing);
+
+            PiecesWhite.Add(Object.Instantiate(Resources.Load<GameObject>("Pieces/rookW"), new Vector2(1, 1), Quaternion.identity));
+            PiecesWhite.Add(Object.Instantiate(Resources.Load<GameObject>("Pieces/rookW"), new Vector2(8, 1), Quaternion.identity));
+
+            PiecesWhite.Add(Object.Instantiate(Resources.Load<GameObject>("Pieces/knightW"), new Vector2(2, 1), Quaternion.identity));
+            PiecesWhite.Add(Object.Instantiate(Resources.Load<GameObject>("Pieces/knightW"), new Vector2(7, 1), Quaternion.identity));
+
+            PiecesWhite.Add(Object.Instantiate(Resources.Load<GameObject>("Pieces/bishopW"), new Vector2(3, 1), Quaternion.identity));
+            PiecesWhite.Add(Object.Instantiate(Resources.Load<GameObject>("Pieces/bishopW"), new Vector2(6, 1), Quaternion.identity));
+
+            PiecesWhite.Add(Object.Instantiate(Resources.Load<GameObject>("Pieces/queenW"), new Vector2(4, 1), Quaternion.identity));
+
+            // We do the same with the black pieces.
+
+            blackKing = Object.Instantiate(Resources.Load<GameObject>("Pieces/kingB"), new Vector2(5, 8), Quaternion.identity);
+            PiecesBlack.Add(blackKing);
+
+            PiecesBlack.Add(Object.Instantiate(Resources.Load<GameObject>("Pieces/rookB"), new Vector2(1, 8), Quaternion.identity));
+            PiecesBlack.Add(Object.Instantiate(Resources.Load<GameObject>("Pieces/rookB"), new Vector2(8, 8), Quaternion.identity));
+
+            PiecesBlack.Add(Object.Instantiate(Resources.Load<GameObject>("Pieces/knightB"), new Vector2(2, 8), Quaternion.identity));
+            PiecesBlack.Add(Object.Instantiate(Resources.Load<GameObject>("Pieces/knightB"), new Vector2(7, 8), Quaternion.identity));
+
+            PiecesBlack.Add(Object.Instantiate(Resources.Load<GameObject>("Pieces/bishopB"), new Vector2(3, 8), Quaternion.identity));
+            PiecesBlack.Add(Object.Instantiate(Resources.Load<GameObject>("Pieces/bishopB"), new Vector2(6, 8), Quaternion.identity));
+
+            PiecesBlack.Add(Object.Instantiate(Resources.Load<GameObject>("Pieces/queenB"), new Vector2(4, 8), Quaternion.identity));
+        }
 
         for (int i = 1; i <= 8; i++)
         {
             PiecesWhite.Add(Object.Instantiate(Resources.Load<GameObject>("Pieces/pawnW"), new Vector2(i, 2), Quaternion.identity));
-        }
-
-        // We do the same with the black pieces.
-
-        blackKing = Object.Instantiate(Resources.Load<GameObject>("Pieces/kingB"), new Vector2(5, 8), Quaternion.identity);
-        PiecesBlack.Add(blackKing);
-
-        PiecesBlack.Add(Object.Instantiate(Resources.Load<GameObject>("Pieces/rookB"), new Vector2(1, 8), Quaternion.identity));
-        PiecesBlack.Add(Object.Instantiate(Resources.Load<GameObject>("Pieces/rookB"), new Vector2(8, 8), Quaternion.identity));
-
-        PiecesBlack.Add(Object.Instantiate(Resources.Load<GameObject>("Pieces/knightB"), new Vector2(2, 8), Quaternion.identity));
-        PiecesBlack.Add(Object.Instantiate(Resources.Load<GameObject>("Pieces/knightB"), new Vector2(7, 8), Quaternion.identity));
-
-        PiecesBlack.Add(Object.Instantiate(Resources.Load<GameObject>("Pieces/bishopB"), new Vector2(3, 8), Quaternion.identity));
-        PiecesBlack.Add(Object.Instantiate(Resources.Load<GameObject>("Pieces/bishopB"), new Vector2(6, 8), Quaternion.identity));
-
-        PiecesBlack.Add(Object.Instantiate(Resources.Load<GameObject>("Pieces/queenB"), new Vector2(4, 8), Quaternion.identity));
-
-        for (int i = 1; i <= 8; i++)
-        {
             PiecesBlack.Add(Object.Instantiate(Resources.Load<GameObject>("Pieces/pawnB"), new Vector2(i, 7), Quaternion.identity));
         }
     }
